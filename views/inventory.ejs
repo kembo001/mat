@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>Inventory - Dream Auto | Quality Used Cars Under $20K</title>
+    <meta name="description" content="Browse our complete inventory of quality used cars under $20K. Find your perfect vehicle at Dream Auto in Elk River, Minnesota." />
+  </head>
+  <body>
+    <%- include('partials/header') %>
+
+    <!-- Main content -->
+    <main class="flex-grow">
+      <!-- Hero Section for Inventory -->
+      <section class="relative bg-cover bg-center text-white py-20 mt-16" style="background-image: url('/images/inventory-background.webp');">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary-900/70 to-blue-900/60"></div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Complete Inventory</h1>
+          <p class="text-xl opacity-90 max-w-2xl mx-auto">
+            Browse our selection of quality used vehicles under $20K. Every car we price to sell quick and include a Carfax report.
+          </p>
+        </div>
+      </section>
+
+      <!-- Search and Filter Section -->
+      <section class="bg-gray-50 py-8">
+        <div class="container mx-auto px-4">
+          <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <form method="GET" action="/inventory">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <select id="title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option value="">All Titles</option>
+                      <option value="clean" <%= filters.title === 'clean' ? 'selected' : '' %>>Clean</option>
+                      <option value="prior-salvage" <%= filters.title === 'prior-salvage' ? 'selected' : '' %>>Prior Salvage</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                    <select id="price" name="price" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                              <option value="">All Prices</option>
+                              <option value="0-4999" <%= filters.price === '0-4999' ? 'selected' : '' %>>$5k and under</option>
+                              <option value="5000-9999" <%= filters.price === '5000-9999' ? 'selected' : '' %>>$5k - $10k</option>
+                              <option value="10000+" <%= filters.price === '10000+' ? 'selected' : '' %>>$10k+</option>
+                          </select>
+                  </div>
+                  <div>
+                    <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                    <select id="year" name="year" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                              <option value="">All Years</option>
+                              <option value="0-2005" <%= filters.year === '0-2005' ? 'selected' : '' %>>2005 and older</option>
+                              <option value="2006-2014" <%= filters.year === '2006-2014' ? 'selected' : '' %>>2006 - 2014</option>
+                              <option value="2015+" <%= filters.year === '2015+' ? 'selected' : '' %>>2015 and up</option>
+                          </select>
+                  </div>
+                  <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option value="">All Status</option>
+                      <option value="0" <%= filters.status === '0' ? 'selected' : '' %>>Available</option>
+                      <option value="1" <%= filters.status === '1' ? 'selected' : '' %>>Sold</option>
+                    </select>
+                  </div>
+                  <div class="flex items-end">
+                    <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-md transition">
+                      Search
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory Grid -->
+      <section class="py-16">
+        <div class="container mx-auto px-4">
+          <% if (cars && cars.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <% cars.forEach(car => { %>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  <div class="w-full h-48 bg-gray-200 relative">
+                     <% if (car.primary_image_url) { %>
+                       <img src="<%= car.primary_image_url %>" alt="<%= car.year %> <%= car.make %> <%= car.model %>" class="w-full h-full object-cover">
+                     <% } else { %>
+                       <img src="/images/placeholder-car.svg" alt="<%= car.year %> <%= car.make %> <%= car.model %>" class="w-full h-full object-cover">
+                     <% } %>
+                   </div>
+                  <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                       <h3 class="text-xl font-bold text-gray-900"><%= car.year %> <%= car.make %> <%= car.model %></h3>
+                       <% if (car.sold) { %>
+                         <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">Sold</span>
+                       <% } else { %>
+                         <span class="bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded">Available</span>
+                       <% } %>
+                     </div>
+                    <p class="text-gray-600 mb-3"><%= car.trim || '' %> • <%= car.mileage ? car.mileage.toLocaleString() : 'N/A' %> miles</p>
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-2xl font-bold text-primary-600">$<%= car.price ? car.price.toLocaleString() : 'N/A' %></span>
+                      <% if (car.price) { %>
+                        <span class="text-sm text-gray-500">Est. $<%= Math.round(car.price / 60) %>/mo</span>
+                      <% } %>
+                    </div>
+                    <div class="flex space-x-2">
+                      <a href="/inventory/<%= car.id %>" class="flex-grow bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded transition text-center">
+                        View Details
+                      </a>
+                      <a href="tel:<%= dealershipPhone %>" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="text-center py-16">
+              <div class="max-w-md mx-auto">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No vehicles found</h3>
+                <p class="mt-1 text-sm text-gray-500">Try adjusting your search filters to see more results.</p>
+              </div>
+            </div>
+          <% } %>
+
+          <!-- Pagination -->
+          <% if (totalPages > 1) { %>
+            <div class="flex justify-center mt-12">
+              <nav class="flex space-x-2">
+                <% if (currentPage > 1) { %>
+                  <a href="?page=<%= currentPage - 1 %><%= filters.title ? '&title=' + filters.title : '' %><%= filters.price ? '&price=' + filters.price : '' %><%= filters.year ? '&year=' + filters.year : '' %><%= filters.status ? '&status=' + filters.status : '' %>" class="px-3 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition">
+                    Previous
+                  </a>
+                <% } %>
+                
+                <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                  <% if (i === currentPage) { %>
+                    <span class="px-3 py-2 bg-primary-600 text-white border border-primary-600 rounded-md">
+                      <%= i %>
+                    </span>
+                  <% } else { %>
+                    <a href="?page=<%= i %><%= filters.title ? '&title=' + filters.title : '' %><%= filters.price ? '&price=' + filters.price : '' %><%= filters.year ? '&year=' + filters.year : '' %><%= filters.status ? '&status=' + filters.status : '' %>" class="px-3 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition">
+                      <%= i %>
+                    </a>
+                  <% } %>
+                <% } %>
+                
+                <% if (currentPage < totalPages) { %>
+                  <a href="?page=<%= currentPage + 1 %><%= filters.title ? '&title=' + filters.title : '' %><%= filters.price ? '&price=' + filters.price : '' %><%= filters.year ? '&year=' + filters.year : '' %><%= filters.status ? '&status=' + filters.status : '' %>" class="px-3 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition">
+                    Next
+                  </a>
+                <% } %>
+              </nav>
+            </div>
+            
+            <div class="text-center mt-4 text-sm text-gray-600">
+              Showing <%= Math.min((currentPage - 1) * 9 + 1, totalCars) %> to <%= Math.min(currentPage * 9, totalCars) %> of <%= totalCars %> vehicles
+            </div>
+          <% } %>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <!-- Include JavaScript -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>
