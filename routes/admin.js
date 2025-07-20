@@ -13,7 +13,7 @@ const upload = multer({
     files: 20, // Maximum 20 files
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ALLOWED_IMAGE_MIMES;
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
