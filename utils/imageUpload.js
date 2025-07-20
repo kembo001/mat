@@ -3,8 +3,14 @@ const { r2Client, bucketName } = require('../config/r2');
 const db = require('../db/database');
 const path = require('path');
 
-// Allowed file types
-const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+// Allowed file types  ⬅️  added image/pjpeg
+const allowedTypes = [
+  'image/jpeg',
+  'image/jpg',
+  'image/pjpeg',   // progressive JPEGs
+  'image/png',
+  'image/webp'
+];
 
 /**
  * Upload a single image to R2
@@ -17,13 +23,18 @@ async function uploadImageToR2(file, carId, displayOrder = 0) {
   try {
     // Validate file type (file size limits are handled by multer in admin.js)
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new Error(`Invalid file type. Allowed types: ${allowedTypes.join(', ')}`);
+      throw new Error(
+        `Invalid file type. Allowed types: ${allowedTypes.join(', ')}`
+      );
     }
 
     // Generate unique filename
     const timestamp = Date.now();
     const extension = path.extname(file.originalname);
-    const filename = `${timestamp}_${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const filename = `${timestamp}_${file.originalname.replace(
+      /[^a-zA-Z0-9.-]/g,
+      '_'
+    )}`;
     const key = `cars/${carId}/${filename}`;
 
     // Upload to R2
@@ -67,20 +78,30 @@ async function uploadImageToR2(file, carId, displayOrder = 0) {
  * @param {boolean} isPrimary - Whether this is the primary image
  * @returns {Promise<number>} Image ID
  */
-function saveImageToDatabase(carId, imageUrl, imageKey, displayOrder = 0, isPrimary = false) {
+function saveImageToDatabase(
+  carId,
+  imageUrl,
+  imageKey,
+  displayOrder = 0,
+  isPrimary = false
+) {
   return new Promise((resolve, reject) => {
     const query = `
       INSERT INTO car_images (car_id, image_url, image_key, display_order, is_primary)
       VALUES (?, ?, ?, ?, ?)
     `;
-    
-    db.run(query, [carId, imageUrl, imageKey, displayOrder, isPrimary ? 1 : 0], function(err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(this.lastID);
+
+    db.run(
+      query,
+      [carId, imageUrl, imageKey, displayOrder, isPrimary ? 1 : 0],
+      function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(this.lastID);
+        }
       }
-    });
+    );
   });
 }
 
@@ -111,7 +132,7 @@ async function uploadCarImages(files, carId) {
     try {
       // Upload to R2
       const uploadResult = await uploadImageToR2(file, carId, displayOrder);
-      
+
       if (uploadResult.success) {
         // Save to database
         const imageId = await saveImageToDatabase(
@@ -170,12 +191,12 @@ async function deleteCarImage(imageId) {
       Bucket: bucketName,
       Key: image.image_key
     });
-    
+
     await r2Client.send(deleteCommand);
 
     // Delete from database
     await new Promise((resolve, reject) => {
-      db.run('DELETE FROM car_images WHERE id = ?', [imageId], (err) => {
+      db.run('DELETE FROM car_images WHERE id = ?', [imageId], err => {
         if (err) reject(err);
         else resolve();
       });
@@ -200,7 +221,7 @@ function getCarImages(carId) {
       WHERE car_id = ? 
       ORDER BY display_order ASC, created_at ASC
     `;
-    
+
     db.all(query, [carId], (err, rows) => {
       if (err) {
         reject(err);
