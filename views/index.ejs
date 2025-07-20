@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <title>Dream Auto - Quality Used Cars Under $20K | Minnesota</title>
-    <meta name="description" content="Dream Auto - Minnesota's trusted used vehicle experts. Quality pre-owned cars under $20K. Fast, simple, and affordable car buying experience." />
+    <title>Shoreline Auto - Quality Used Cars Under $20K | Minnesota</title>
+    <meta name="description" content="Shoreline Auto - Minnesota's trusted used vehicle experts. Quality pre-owned cars under $20K. Fast, simple, and affordable car buying experience." />
   </head>
   <body>
     <%- include('partials/header') %>
@@ -19,7 +19,7 @@
       <section class="relative text-white min-h-screen flex items-center pt-0">
         <!-- Background image with overlay - covers entire viewport including navbar area -->
         <div class="absolute inset-0 z-0">
-          <img src="/images/dream-hero-background.webp" alt="Dream Auto Car Dealership" class="w-full h-full object-cover" />
+          <img src="/images/dream-hero-background.webp" alt="Shoreline Auto Car Dealership" class="w-full h-full object-cover" />
           <div class="absolute inset-0 bg-gradient-to-r from-primary-900/70 to-blue-900/60"></div>
         </div>
 
@@ -86,7 +86,7 @@
                   aria-label="View details for <%= car.title %> - $<%= car.price.toLocaleString() %>">
               <div class="relative">
                  <img src="<%= car.primary_image_url %>" 
-                      alt="<%= car.title %> - Featured Car at Dream Auto" 
+                      alt="<%= car.title %> - Featured Car at Shoreline Auto" 
                       class="w-full h-48 object-cover"
                       onerror="this.src='/images/placeholder-car.svg'; this.onerror=null;">
                  <div class="absolute top-2 right-2 bg-primary-600 text-white px-2 py-1 rounded text-sm font-semibold">
